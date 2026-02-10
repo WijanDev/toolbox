@@ -7,7 +7,7 @@ import viteTsConfigPaths from 'vite-tsconfig-paths'
 import { fileURLToPath, URL } from 'node:url'
 import { nitro } from 'nitro/vite'
 
-const config = defineConfig(({ mode }) => ({
+export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -39,5 +39,3 @@ const config = defineConfig(({ mode }) => ({
     viteReact(),
   ].filter(Boolean),
 }))
-
-export default config
