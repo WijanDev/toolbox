@@ -7,24 +7,37 @@ import viteTsConfigPaths from 'vite-tsconfig-paths'
 import { fileURLToPath, URL } from 'url'
 import { nitro } from 'nitro/vite'
 
-const config = defineConfig({
+const config = defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    minify: 'esbuild', // Es el más rápido y eficiente para Cloudflare
+    sourcemap: false,  // Desactiva esto para reducir el peso de los assets en producción
+    reportCompressedSize: false, // Acelera la build
+    rollupOptions: {
+      output: {
+        // Esto ayuda a que el JS se divida en trozos más pequeños (Lazy loading)
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        },
+      },
+    },
+  },
   plugins: [
-    tailwindcss(),
-    devtools(),
+    // Solo incluimos devtools si el modo NO es production
+    mode !== 'production' && devtools(),
     nitro(),
-    // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
-
     tanstackStart(),
     viteReact(),
-  ],
-})
+  ].filter(Boolean),
+}))
 
 export default config
