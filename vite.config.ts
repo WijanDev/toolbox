@@ -4,7 +4,7 @@ import { devtools } from '@tanstack/devtools-vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
-import { fileURLToPath, URL } from 'url'
+import { fileURLToPath, URL } from 'node:url'
 import { nitro } from 'nitro/vite'
 
 const config = defineConfig(({ mode }) => ({
@@ -29,7 +29,7 @@ const config = defineConfig(({ mode }) => ({
     },
   },
   plugins: [
-    // Solo incluimos devtools si el modo NO es production
+    tailwindcss(),
     mode !== 'production' && devtools(),
     nitro(),
     viteTsConfigPaths({
