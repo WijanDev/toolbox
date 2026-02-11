@@ -4,27 +4,34 @@ import { devtools } from '@tanstack/devtools-vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
-import { fileURLToPath, URL } from 'url'
+import { fileURLToPath, URL } from 'node:url'
 import { nitro } from 'nitro/vite'
 
-const config = defineConfig({
+export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    minify: 'esbuild', // Es el más rápido y eficiente para Cloudflare
+    sourcemap: false,  // Desactiva esto para reducir el peso de los assets en producción
+    reportCompressedSize: false, // Acelera la build
+    rollupOptions: {
+      output: {
+        // Esto ayuda a que el JS se divida en trozos más pequeños (Lazy loading)
+        manualChunks: undefined
+      },
+    },
+  },
   plugins: [
     tailwindcss(),
-    devtools(),
+    mode !== 'production' && devtools(),
     nitro(),
-    // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
-
     tanstackStart(),
     viteReact(),
-  ],
-})
-
-export default config
+  ].filter(Boolean),
+}))
