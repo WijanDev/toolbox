@@ -20,11 +20,7 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         // Esto ayuda a que el JS se divida en trozos más pequeños (Lazy loading)
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
-        },
+        manualChunks: undefined
       },
     },
   },
